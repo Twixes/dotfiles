@@ -1,0 +1,19 @@
+[cmd_duration]
+style = "italic dimmed"
+
+[directory]
+truncation_length = 8
+style = "bold blue"
+
+[hostname]
+ssh_only = false
+style = "bold green"
+
+[time]
+format = "[$time]($style) "
+time_format = "[%T]"
+style = "dimmed"
+disabled = false
+
+[username]
+show_always = true
