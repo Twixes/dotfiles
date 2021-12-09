@@ -87,3 +87,6 @@ fish -c 'curl -sL https://git.io/fisher | source && fisher install jorgebucaran/
 
 # Install Fisher packages
 fish -c 'fisher update'
+
+# Prefer Homebrew versions of tools in fish
+fish -c 'fish_add_path /opt/homebrew/bin'
