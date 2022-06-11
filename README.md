@@ -1,4 +1,4 @@
-# .files
+# dotfiles
 
 The ideal workstation setup.
 
@@ -11,6 +11,8 @@ rsync --exclude ".git/" \
     --exclude ".DS_Store" \
     --exclude "README.md" \
     -avh --no-perms ~/Developer/dotfiles/ ~
-# If on macOS, also run the configuration script
-~/.macos
+if [[ $(uname) == 'Darwin' ]]; then
+    ~/macos.sh
+fi
+[ $? -eq 0 ] && rm ~/macos.sh
 ```
