@@ -1,3 +1,5 @@
+add_newline = false
+
 [cmd_duration]
 style = "italic dimmed"
 
@@ -17,3 +19,6 @@ disabled = false
 
 [username]
 show_always = true
+
+[aws]
+disabled = true

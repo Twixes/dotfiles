@@ -11,9 +11,6 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 ### SYSTEM SETTINGS ###
 
-# Disable Gatekeeper
-sudo spctl --master-disable
-
 # Disable press-and-hold for keys in favor of key repeat
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
@@ -59,14 +56,14 @@ defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 # Enable the automatic update check
 defaults write com.apple.SoftwareUpdate AutomaticCheckEnabled -bool true
 
-# Check for software updates daily, not just once per week
-defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
-
 # Download newly available updates in background
 defaults write com.apple.SoftwareUpdate AutomaticDownload -int 1
 
 # Turn on app auto-update
 defaults write com.apple.commerce AutoUpdate -bool true
+
+# Turn off login banner
+touch ~/.hushlogin
 
 ### PACKAGES ###
 
@@ -83,10 +80,7 @@ echo '/opt/homebrew/bin/fish' | sudo tee -a /etc/shells
 sudo chsh -s /opt/homebrew/bin/fish
 
 # Install Fisher
-fish -c 'curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher'
+fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
 
 # Install Fisher packages
 fish -c 'fisher update'
-
-# Prefer Homebrew versions of tools in fish
-fish -c 'fish_add_path /opt/homebrew/bin'
