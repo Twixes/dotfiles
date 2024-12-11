@@ -71,7 +71,7 @@ touch ~/.hushlogin
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install packages with Homebrew based on the Brewfile
-brew bundle --global
+brew bundle --file ./Brewfile
 
 # Mark fish as a valid shell
 echo '/opt/homebrew/bin/fish' | sudo tee -a /etc/shells
