@@ -77,7 +77,7 @@ brew bundle --file ./Brewfile
 echo '/opt/homebrew/bin/fish' | sudo tee -a /etc/shells
 
 # Switch to fish as the default shell
-sudo chsh -s /opt/homebrew/bin/fish
+sudo chsh -s /opt/homebrew/bin/fish $USER
 
 # Install Fisher
 fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
