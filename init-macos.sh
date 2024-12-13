@@ -72,15 +72,3 @@ touch ~/.hushlogin
 
 # Install packages with Homebrew based on the Brewfile
 brew bundle --file ./Brewfile
-
-# Mark fish as a valid shell
-echo '/opt/homebrew/bin/fish' | sudo tee -a /etc/shells
-
-# Switch to fish as the default shell
-sudo chsh -s /opt/homebrew/bin/fish $USER
-
-# Install Fisher
-fish -c 'curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher'
-
-# Install Fisher packages
-fish -c 'fisher update'
