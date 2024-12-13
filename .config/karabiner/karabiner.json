@@ -5,11 +5,16 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "Change globe into emoji picker shortcut (for Raycast)",
+                        "description": "Turn globe into Raycast emoji picker shortcut",
                         "manipulators": [
                             {
                                 "from": { "key_code": "fn" },
                                 "to": [
+                                    {
+                                        "key_code": "fn"
+                                    }
+                                ],
+                                "to_if_alone": [
                                     {
                                         "key_code": "spacebar",
                                         "modifiers": ["left_command", "left_control"]
