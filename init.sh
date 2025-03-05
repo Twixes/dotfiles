@@ -3,6 +3,7 @@
 # Put config files in place
 mkdir -p ~/.config
 rsync -avh --no-perms ./.config/ ~/.config/
+cp .gitconfig ~/.gitconfig
 
 # Run OS-specific init
 if [[ $(uname) == 'Darwin' ]]; then
