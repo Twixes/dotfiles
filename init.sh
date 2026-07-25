@@ -1,9 +1,19 @@
 #!/usr/bin/env bash
 
+repo_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
 # Put config files in place
 mkdir -p ~/.config
 rsync -avh --no-perms ./.config/ ~/.config/
 cp .gitconfig ~/.gitconfig
+
+### CLAUDE CODE ###
+
+# Symlink rather than copy, so skills stay editable in place and every tweak is already in git
+mkdir -p ~/.claude/skills
+for skill in "$repo_dir"/.claude/skills/*/; do
+    ln -sfn "${skill%/}" ~/.claude/skills/
+done
 
 # Run OS-specific init
 if [[ $(uname) == 'Darwin' ]]; then
