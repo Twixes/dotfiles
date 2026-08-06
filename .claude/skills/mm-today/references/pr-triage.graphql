@@ -1,0 +1,34 @@
+# Batched PR triage for mm-today.
+# Page size is 25 ON PURPOSE: 50+ makes GitHub 502 on the review queue. See queries.md.
+# Driven by fetch-prs.sh, which paginates. Do not raise first: without re-testing.
+query($q: String!, $after: String) {
+  rateLimit { cost remaining }
+  search(query: $q, type: ISSUE, first: 25, after: $after) {
+    issueCount
+    pageInfo { hasNextPage endCursor }
+    nodes {
+      ... on PullRequest {
+        number title url isDraft createdAt updatedAt
+        additions deletions changedFiles totalCommentsCount
+        mergeable mergeStateStatus reviewDecision
+        baseRefName isInMergeQueue
+        autoMergeRequest { enabledAt }
+        author { login }
+        repository { nameWithOwner }
+        labels(first: 15) { nodes { name } }
+        files(first: 100) { nodes { path } }
+        viewerLatestReview { state submittedAt }
+        reviewRequests { totalCount }
+        latestReviews(first: 20) { nodes { author { login } state submittedAt } }
+        reviewThreads(first: 50) { nodes {
+          isResolved isOutdated
+          comments(first: 1) { nodes { author { login } createdAt } }
+        } }
+        commits(last: 1) { nodes { commit {
+          committedDate pushedDate
+          statusCheckRollup { state }
+        } } }
+      }
+    }
+  }
+}
