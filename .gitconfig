@@ -1,6 +1,8 @@
 [user]
 	name = Michael Matloka
 	email = michael@matloka.com
+	# Import the secret key on a new machine first – with gpgsign below, commits fail loudly without it
+	signingkey = 1ABB63188149D508
 
 # clearly makes git better
 
@@ -28,6 +30,7 @@
 	autocorrect = prompt
 [commit]
 	verbose = true
+	gpgsign = true
 [rerere]
 	enabled = true
 	autoupdate = true

@@ -1,0 +1,134 @@
+{
+  "agentPushNotifEnabled": true,
+  "alwaysThinkingEnabled": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "autoUpdatesChannel": "stable",
+  "effortLevel": "high",
+  "enabledPlugins": {
+    "braintrust@braintrust-claude-plugin": true,
+    "chrome-devtools-mcp@chrome-devtools-plugins": true,
+    "claude-md-management@claude-plugins-official": true,
+    "code-governance@code-governance": true,
+    "commit-commands@claude-plugins-official": true,
+    "compound-engineering@compound-engineering-plugin": true,
+    "feature-dev@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "posthog@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "supabase@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "anthropic-agent-skills": {
+      "source": {
+        "repo": "anthropics/skills",
+        "source": "github"
+      }
+    },
+    "braintrust-claude-plugin": {
+      "source": {
+        "repo": "braintrustdata/braintrust-claude-plugin",
+        "source": "github"
+      }
+    },
+    "chrome-devtools-plugins": {
+      "source": {
+        "repo": "ChromeDevTools/chrome-devtools-mcp",
+        "source": "github"
+      }
+    },
+    "code-governance": {
+      "source": {
+        "repo": "useparadigm/code-governance-plugin",
+        "source": "github"
+      }
+    },
+    "compound-engineering-plugin": {
+      "source": {
+        "repo": "EveryInc/compound-engineering-plugin",
+        "source": "github"
+      }
+    }
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "\"$HOME/.claude/hooks/claude-notify.sh\"",
+            "timeout": 15,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "\"$HOME/.claude/hooks/claude-notify.sh\"",
+            "timeout": 15,
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  },
+  "inputNeededNotifEnabled": true,
+  "minimumVersion": "2.1.9",
+  "model": "opus[1m]",
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:braintrust.dev)",
+      "WebFetch(domain:www.braintrust.dev)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(rg:*)",
+      "Bash(ruff check:*)",
+      "Bash(python:*)",
+      "Bash(pnpm typescript:check:*)",
+      "Bash(docker build:*)",
+      "Bash(pnpm format:*)",
+      "Bash(ruff:*)",
+      "Bash(rm:*)",
+      "Bash(pkill -f pytest)",
+      "Bash(terminal-notifier:*)",
+      "Bash(pnpm --filter=@posthog/frontend format)",
+      "Bash(pnpm:*)",
+      "Bash(claude doctor)",
+      "Bash(python3:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(pytest:*)",
+      "Bash(flox activate:*)",
+      "Bash(tee:*)",
+      "Read(//private/tmp/**)",
+      "Bash(cat:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git restore:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(git rev-parse:*)",
+      "Bash(git stash:*)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "showThinkingSummaries": true,
+  "skipAutoPermissionPrompt": true,
+  "skipDangerousModePermissionPrompt": true,
+  "tui": "fullscreen",
+  "verbose": true
+}

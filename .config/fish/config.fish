@@ -1,4 +1,8 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Keep editor extensions out of the Brewfile - Cursor and VS Code sync their own
+set -gx HOMEBREW_BUNDLE_DUMP_NO_VSCODE 1
+
 pyenv init - | source
 pyenv virtualenv-init - | source
 direnv hook fish | source
