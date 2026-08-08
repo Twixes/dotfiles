@@ -72,3 +72,23 @@ touch ~/.hushlogin
 
 # Install packages with Homebrew based on the Brewfile
 brew bundle --file ./Brewfile
+
+### CLAUDE CODE NOTIFICATIONS ###
+# Below brew bundle, because both steps need jq and terminal-notifier.
+
+# The bundle that carries Claude's icon on turn-end notifications
+./.claude/hooks/install-notifier-app.sh
+
+# Register the Stop hook, leaving the rest of settings.json alone – it holds
+# machine-specific state that has no business in git.
+settings=~/.claude/settings.json
+hook_command='"$HOME/.claude/hooks/notify-done.sh"'
+mkdir -p ~/.claude
+[ -f "$settings" ] || echo '{}' >"$settings"
+jq --arg cmd "$hook_command" '
+    .hooks //= {}
+    | .hooks.Stop //= []
+    | if [.hooks.Stop[]?.hooks[]?.command] | index($cmd) then .
+      else .hooks.Stop += [{hooks: [{type: "command", command: $cmd, timeout: 15}]}]
+      end
+' "$settings" >"$settings.tmp" && mv "$settings.tmp" "$settings"

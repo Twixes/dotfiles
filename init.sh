@@ -15,6 +15,11 @@ for skill in "$repo_dir"/.claude/skills/*/; do
     ln -sfn "${skill%/}" ~/.claude/skills/
 done
 
+mkdir -p ~/.claude/hooks
+for hook in "$repo_dir"/.claude/hooks/*.sh; do
+    ln -sfn "$hook" ~/.claude/hooks/
+done
+
 # Run OS-specific init
 if [[ $(uname) == 'Darwin' ]]; then
     ./init-macos.sh
