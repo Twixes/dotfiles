@@ -1,0 +1,2 @@
+[global]
+warn_timeout = 0 # Ignore a timeout appearing from this issue: https://github.com/direnv/direnv/issues/1065

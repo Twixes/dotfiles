@@ -1,19 +1,22 @@
 #!/bin/bash
-# Stop hook – fires when Claude Code actually finishes a turn.
+# Local macOS notifications for Claude Code, on two events:
 #
-# Unlike the Notification event (which fires when Claude wants permission or
-# has gone idle), Stop fires exactly once when the main agent stops responding.
+#   Stop          the main agent finished a turn – says what it did
+#   Notification  Claude wants permission or has gone idle – says what it needs
+#
+# The built-in inputNeededNotifEnabled does not produce a local alert, so the
+# Notification event is the only way to hear about a blocked turn.
 #
 # Stays silent while the terminal app is frontmost, because then you are already
-# looking at the answer. Override the app with CLAUDE_NOTIFY_TERM_BUNDLE.
+# looking at it. Override the app with CLAUDE_NOTIFY_TERM_BUNDLE.
 
 INPUT=$(cat)
-IFS=$'\t' read -r TRANSCRIPT CWD STOP_ACTIVE < <(
-  echo "$INPUT" | jq -r '[.transcript_path // "", .cwd // "", .stop_hook_active // false] | @tsv')
+IFS=$'\t' read -r EVENT TRANSCRIPT CWD STOP_ACTIVE ASK < <(
+  echo "$INPUT" | jq -r '[.hook_event_name // "Stop", .transcript_path // "",
+    .cwd // "", .stop_hook_active // false, (.message // "")] | @tsv')
 
 # Already inside a Stop-hook-continued turn – do not notify twice.
 [ "$STOP_ACTIVE" = "true" ] && exit 0
-[ -f "$TRANSCRIPT" ] || exit 0
 
 # macOS sets __CFBundleIdentifier for anything launched from a .app, and it
 # survives Ghostty -> shell -> claude -> hook. Deriving it keeps the check
@@ -35,6 +38,20 @@ if [ -n "$FRONT_ASN" ]; then
   [ "$FRONT_BUNDLE" = "$TERM_BUNDLE" ] && exit 0
 fi
 
+# A Notification already says what it needs, so the transcript is only read for
+# the Stop case, where the answer has to be dug out of it.
+if [ "$EVENT" = Notification ]; then
+  TITLE="Claude Code – needs you"
+  MESSAGE="${ASK:-Waiting on you.}"
+  SOUND=Ping
+  SLOT=needs-you
+else
+  TITLE="Claude Code – done"
+  SOUND=Glass
+  SLOT=done
+  [ -f "$TRANSCRIPT" ] || exit 0
+fi
+
 # Newest-first scan for the two things the alert needs: how long the turn took,
 # and the last thing Claude said. The turn started at the last REAL user prompt
 # – `type: "user"` entries also carry tool_results, which are not prompts.
@@ -44,7 +61,7 @@ fi
 # close to the hook timeout, on exactly the long turns worth notifying about.
 # 500 lines covers p99 of observed turns; past that the duration is dropped but
 # the message still resolves, since it sits ~4 lines from the end.
-IFS=$'\t' read -r ELAPSED MESSAGE < <(
+[ "$EVENT" = Notification ] || IFS=$'\t' read -r ELAPSED MESSAGE < <(
   tac "$TRANSCRIPT" 2>/dev/null | head -n 500 | jq -rs '
     def prompt:
       select(.type == "user")
@@ -80,9 +97,9 @@ NOTIFIER="$HOME/Applications/Claude Code Notifier.app/Contents/MacOS/terminal-no
 [ -x "$NOTIFIER" ] || NOTIFIER=terminal-notifier
 
 "$NOTIFIER" \
-  -title "Claude Code – done" \
+  -title "$TITLE" \
   -subtitle "$SUBTITLE" \
   -message "${MESSAGE:-Turn finished.}" \
-  -sound Glass \
-  -group "claude-done-$DIR" \
+  -sound "$SOUND" \
+  -group "claude-$SLOT-$DIR" \
   -activate "$TERM_BUNDLE"

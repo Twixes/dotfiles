@@ -93,6 +93,8 @@ Worked example: Aug 3, *"Hmm I'll see what I can do do have wizard support Repla
 
 Sort into **outstanding** (nothing started), **in flight** (link the PR, and check whether *it* is stalled), or **discharged** (drop silently).
 
+**Then drop anything nobody is waiting on, silently too.** A promise only earns a line if a named person is blocked on it or plainly expecting it. Something he mused about doing, that the audience moved on from, is not a dropped ball — reporting it as one is noise dressed up as diligence. Don't report it as a non-finding either ("loose thread, not a promise"); just cut it.
+
 ## 5. Bucket the review queue
 
 His own PRs are handled by step 2. For the queue:

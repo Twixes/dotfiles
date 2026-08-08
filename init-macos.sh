@@ -73,22 +73,33 @@ touch ~/.hushlogin
 # Install packages with Homebrew based on the Brewfile
 brew bundle --file ./Brewfile
 
-### CLAUDE CODE NOTIFICATIONS ###
-# Below brew bundle, because both steps need jq and terminal-notifier.
+### SETAPP ###
 
-# The bundle that carries Claude's icon on turn-end notifications
+# Setapp ships no CLI and no documented install URL, so its apps cannot be
+# installed from a script the way casks can. The `setapp` cask in the Brewfile
+# gets the client; this only reports what is still missing after you sign in.
+missing=""
+while IFS= read -r app; do
+    [ -n "$app" ] || continue
+    [ -d "/Applications/Setapp/$app.app" ] || missing="$missing  $app"$'\n'
+done <./Setappfile
+if [ -n "$missing" ]; then
+    printf 'Setapp apps still to install from the Setapp client:\n%s' "$missing" >&2
+fi
+
+### CLAUDE CODE NOTIFICATIONS ###
+
+# Below brew bundle, which is where terminal-notifier comes from. The rest of
+# the Claude Code setup is OS-neutral and lives back in init.sh.
 ./.claude/hooks/install-notifier-app.sh
 
-# Register the Stop hook, leaving the rest of settings.json alone – it holds
-# machine-specific state that has no business in git.
-settings=~/.claude/settings.json
-hook_command='"$HOME/.claude/hooks/notify-done.sh"'
-mkdir -p ~/.claude
-[ -f "$settings" ] || echo '{}' >"$settings"
-jq --arg cmd "$hook_command" '
-    .hooks //= {}
-    | .hooks.Stop //= []
-    | if [.hooks.Stop[]?.hooks[]?.command] | index($cmd) then .
-      else .hooks.Stop += [{hooks: [{type: "command", command: $cmd, timeout: 15}]}]
-      end
-' "$settings" >"$settings.tmp" && mv "$settings.tmp" "$settings"
+### GIT ###
+
+# Recreate the git-lfs filter block rather than tracking it in .gitconfig
+git lfs install
+
+# The signing key moves through 1Password, never through this repo – see
+# ./gpg-key.sh. Read the id from .gitconfig so there is one copy of it.
+signingkey=$(git config --file ./.gitconfig --get user.signingkey)
+gpg --list-secret-keys "$signingkey" >/dev/null 2>&1 \
+    || echo "WARNING: signing key $signingkey missing – run ./gpg-key.sh restore, or commits will fail" >&2
