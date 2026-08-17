@@ -1,9 +1,7 @@
 tap "anomalyco/tap", trusted: true
 tap "depot/tap", trusted: true
-tap "homebrew/bundle"
-tap "homebrew/services"
-tap "lablup/tap"
-tap "oven-sh/bun"
+tap "lablup/tap", trusted: true
+tap "oven-sh/bun", trusted: true
 tap "posthog/tap", trusted: true
 tap "redpanda-data/tap", trusted: true
 tap "withgraphite/tap", trusted: true
