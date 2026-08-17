@@ -9,8 +9,6 @@ tap "redpanda-data/tap", trusted: true
 tap "withgraphite/tap", trusted: true
 # Run your GitHub Actions locally
 brew "act"
-# ANother Tool for Language Recognition C++ Runtime Library
-brew "antlr4-cpp-runtime"
 # Codec library for encoding and decoding AV1 video streams
 brew "aom"
 # Record and share terminal sessions
@@ -366,8 +364,6 @@ cask "1password"
 # Command-line interface for 1Password
 cask "1password-cli"
 cask "alcove"
-# Distribution of the Python and R programming languages for scientific computing
-cask "anaconda"
 # Chromium based browser
 cask "arc"
 cask "bambu-studio"
@@ -394,14 +390,13 @@ cask "figma"
 # Web browser
 cask "firefox"
 # Manages environments across the software lifecycle
-cask "flox"
 cask "font-server-mono"
 cask "font-sf-mono-for-powerline"
 # Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
 # Desktop client for GitHub repositories
 cask "github"
-cask "glaze"
+cask "glaze-app"
 # Web browser
 cask "google-chrome"
 # AI-powered notepad for meetings
@@ -470,30 +465,12 @@ cask "zen"
 cask "zoom"
 mas "1Blocker", id: 1365531024
 mas "1Password for Safari", id: 1569813296
-mas "Auxy", id: 6745871298
 mas "Camera RawX", id: 6587554858
 mas "Color Picker", id: 1545870783
 mas "Dato", id: 1470584107
-mas "GarageBand", id: 682658836
 mas "Hand Mirror", id: 1502839586
 mas "iA Writer", id: 775737590
-mas "iMovie", id: 408981434
-mas "Keynote", id: 409183694
 mas "Microsoft To Do", id: 1274495053
-mas "MINDSTORMS", id: 1515448947
-mas "Numbers", id: 409203825
-mas "Pages", id: 409201541
-mas "Perplexity", id: 6714467650
 mas "Refined GitHub", id: 1519867270
-mas "Stando", id: 6455303729
 mas "Xcode", id: 497799835
-go "golang.org/x/tools/gopls"
-go "honnef.co/go/tools/cmd/staticcheck"
-cargo "sqlx-cli"
-uv "code-governance"
-uv "datacurve-pier", source: "git+https://github.com/datacurve-ai/pier"
-npm "@posthog/cli"
-npm "agent-browser"
-npm "greptile"
 npm "pnpm"
-npm "vsce"
