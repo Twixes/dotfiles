@@ -1,8 +1,6 @@
 I'm Michael, a software engineer.
 
-<!-- Current role goes here: what I work on, where the codebases live, and how
-     they relate to each other. Claude leans on this hard, so keep it current -
-     it is the first thing to rewrite when the job changes. -->
+I work at Viktor, where everything lives in one monorepo, zetalabs-ai/zeta.
 
 I also have a bunch of side projects, so a lot of the time we'll be talking
 about something other than the day job.

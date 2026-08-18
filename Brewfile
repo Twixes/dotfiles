@@ -333,6 +333,8 @@ brew "uv"
 brew "vips"
 # Tool for creating isolated virtual python environments
 brew "virtualenv"
+# Manage the desktop wallpaper
+brew "wallpaper"
 # Command-line streaming torrent client
 brew "webtorrent-cli"
 # Internet file retriever

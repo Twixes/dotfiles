@@ -1,8 +1,18 @@
 [user]
 	name = Michael Matloka
 	email = michael@matloka.com
-	# Import the secret key on a new machine first – with gpgsign below, commits fail loudly without it
+	# init.sh restores the secret key from 1Password – with gpgsign below, commits fail loudly without it
 	signingkey = 1ABB63188149D508
+
+# Work commits go out under the work address. Keyed on the remote rather than a
+# directory, so a repo is treated by who owns it and not by where it was cloned.
+# Both URL forms, because the shorthand ssh one does not look like the https one.
+# The signing key is the same either way; GitHub only verifies a signature when
+# the committer address is also a uid on the key, so both are on it.
+[includeIf "hasconfig:remote.*.url:git@github.com:zetalabs-ai/**"]
+	path = ~/.gitconfig-zetalabs-ai
+[includeIf "hasconfig:remote.*.url:https://github.com/zetalabs-ai/**"]
+	path = ~/.gitconfig-zetalabs-ai
 
 # clearly makes git better
 

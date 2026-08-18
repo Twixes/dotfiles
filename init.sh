@@ -2,10 +2,24 @@
 
 repo_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
+### UP FRONT ###
+# Everything a human has to answer is at the top of this script and the top of
+# init-macos.sh, so the hour of installing that follows can be walked away from.
+
+# Ask for the administrator password once
+sudo -v
+
+# Then keep the timestamp warm for the rest of the run, including the shell
+# change at the bottom of this script and every Homebrew cask that ships a pkg
+# and shells out to sudo on its own. Each expiry would be another prompt.
+while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
 # Put config files in place
 mkdir -p ~/.config
 rsync -avh --no-perms ./.config/ ~/.config/
 cp .gitconfig ~/.gitconfig
+# Pulled in by .gitconfig, but only for repos owned by the work org
+cp .gitconfig-zetalabs-ai ~/.gitconfig-zetalabs-ai
 
 ### CLAUDE CODE ###
 
@@ -33,7 +47,8 @@ chmod 600 ~/.ssh/config
 ### GPG ###
 
 # Without this, gpg-agent falls back to a pinentry that cannot prompt from a
-# terminal, and every signed commit fails at the passphrase step.
+# terminal, and every signed commit fails at the passphrase step. The key itself
+# comes down in the OS-specific init below, which is where gpg and op come from.
 mkdir -p ~/.gnupg && chmod 700 ~/.gnupg
 cp .gnupg/gpg-agent.conf ~/.gnupg/gpg-agent.conf
 

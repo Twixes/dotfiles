@@ -12,8 +12,14 @@ Then, run:
 git clone https://github.com/Twixes/dotfiles.git ~/Developer/dotfiles
 cd ~/Developer/dotfiles
 ./init.sh
-./gpg-key.sh restore
 ```
+
+`init.sh` asks for three things, all in the first couple of minutes: your
+password, the signing key out of 1Password, and a sign-in to the App Store,
+because `mas` can only install apps the signed-in Apple Account already owns.
+After that the long tail of installing can be walked away from – except for the
+casks that ship a vendor installer or a system extension, which ask for
+themselves whatever the script does.
 
 Before erasing a machine, run:
 ```bash
