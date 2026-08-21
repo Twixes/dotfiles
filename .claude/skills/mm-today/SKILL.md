@@ -1,6 +1,6 @@
 ---
 name: mm-today
-description: "Michael's daily work triage. Answers one question: if I were planning the whole day right now, what would be top of mind? Sweeps his open PRs, his review queue, #team-self-driving, and the promises he's made across Slack, then ranks them by whose court the ball is in. Biased toward reducing work in progress — landing stalled work beats starting new work — and grounds impact claims in real PostHog usage data rather than intuition. Specialises in getting shot-off drafts over the line: the real solutions sitting invisible because nobody was asked to review them. Gathers read-only and never posts, merges, or replies without a per-item yes. Use when asked what to work on, for a daily triage or standup, to go through the PR backlog or review queue, or to check what he's promised and not delivered."
+description: "Michael's daily work triage. Answers one question: if I were planning the whole day right now, what would be top of mind? Sweeps his open PRs, his review queue, team Slack at Zeta Labs, and the promises he's made across Slack, then ranks them by whose court the ball is in. Biased toward reducing work in progress — landing stalled work beats starting new work — and grounds impact claims in real Viktor usage data rather than intuition. Specialises in getting shot-off drafts over the line: the real solutions sitting invisible because nobody was asked to review them. Gathers read-only and never posts, merges, or replies without a per-item yes. Use when asked what to work on, for a daily triage or standup, to go through the PR backlog or review queue, or to check what he's promised and not delivered."
 ---
 
 # mm-today
@@ -13,7 +13,7 @@ Not "what fits in the next 90 minutes." It doesn't matter whether he's running t
 
 **Hard rules.** Gathering is read-only. Never post a Slack message, never comment on or approve a PR, never merge, never mark ready for review, never close anything, and never push, until Michael says yes to that specific item. "Yes, merge #890" is permission to merge #890 and nothing else.
 
-**Scope: the PostHog org only.** `org:PostHog` on every query.
+**Scope: the Zeta Labs GitHub org only.** `org:zetalabs-ai` on every query. Day-job work lives in the `zetalabs-ai/zeta` monorepo (Viktor). Side projects are out of scope unless he names them.
 
 ## 1. Gather
 
@@ -23,11 +23,11 @@ Then four sweeps, **fired in parallel**, because the Slack searches dominate wal
 
 ```bash
 D=~/.claude/skills/mm-today/references
-$D/fetch-prs.sh 'is:pr is:open org:PostHog author:Twixes'            # his PRs (~28)
-$D/fetch-prs.sh 'is:pr is:open org:PostHog review-requested:Twixes'  # his queue (~78)
+$D/fetch-prs.sh 'is:pr is:open org:zetalabs-ai author:Twixes'            # his PRs
+$D/fetch-prs.sh 'is:pr is:open org:zetalabs-ai review-requested:Twixes'  # his queue
 ```
 
-Plus `#team-self-driving` (`C09SK2PAGKF`, last 2–3 days) and a promise sweep over the last 14 days.
+Plus recent team Slack at Zeta Labs (last 2–3 days) and a promise sweep over the last 14 days. Don't hardcode a channel; discover the ones he's actually in from mentions and recent conversations.
 
 **Also check what he's already in the middle of** — current branch, uncommitted changes, and the last few commits in whichever repo he's running from. It's cheap (`git status`, `git log --oneline -5`, `git branch --show-current`) and it changes the plan: an item that's a five-minute finish *because he's already in that repo with that branch checked out* ranks far above an identical item that costs a context switch. Say when something lines up with where he already is.
 
@@ -75,7 +75,7 @@ Age is a modifier, not the signal. Use it to say how long something has been stu
 
 The PR list alone will mislead you — a tiny PR three people are waiting on outranks a big one nobody has asked about.
 
-From `#team-self-driving`, extract **only what changes a priority**: someone blocked on Michael, work colliding with one of his open PRs, an unanswered question to him, and what the team is pushing this week. Skip standup noise and deploy chatter.
+From team Slack, extract **only what changes a priority**: someone blocked on Michael, work colliding with one of his open PRs, an unanswered question to him, and what the team is pushing this week. Skip standup noise and deploy chatter.
 
 **Unanswered mentions** across all channels are the highest-yield dropped-ball signal in the run.
 
@@ -89,7 +89,7 @@ Cast a wide net across phrasings, then filter hard — recall at the search step
 
 **Then check whether each is already discharged.** A promise followed by a PR or a delivering message is *done* and must not be reported as outstanding.
 
-Worked example: Aug 3, *"Hmm I'll see what I can do do have wizard support Replay Vision scanners"* → `wizard#1055` and `context-mill#313` opened the next day. That's **in flight**. And the real finding is sharper than the promise: `context-mill#313` was sitting green and clean with **no reviewer requested** — a customer commitment, invisible, one click from moving. That intersection of promise and stall is the most valuable thing this skill produces.
+Worked example of the shape: he says he'll add support for something a customer asked about; a PR goes up the next day; that PR is sitting green with **no reviewer requested**. A customer commitment, invisible, one click from moving. That intersection of promise and stall is the most valuable thing this skill produces.
 
 Sort into **outstanding** (nothing started), **in flight** (link the PR, and check whether *it* is stalled), or **discharged** (drop silently).
 
@@ -106,11 +106,11 @@ His own PRs are handled by step 2. For the queue:
 | **Back in his court** | He reviewed it, the author has pushed since |
 | **Someone else has it** | `reviewRequests.totalCount > 1` — lower priority; he isn't the only one who can |
 
-**Judge risk from file paths, never from titles.** On a real run, 26 of 78 queue PRs touched risky paths, and titles hid most of them — `chore(hogai): return frozen dataclasses instead of tuples` touches auth, billing, and serializers. Conversely, **48 of 78 had him as the sole reviewer**: those genuinely cannot proceed without him, and that outranks almost everything else in the queue.
+**Judge risk from file paths, never from titles.** Titles hide risk — a `chore` that touches auth, billing, or serializers is a deep review, whatever the subject line says. Conversely, PRs where he is the **sole reviewer** genuinely cannot proceed without him, and that outranks almost everything else in the queue.
 
 Budget one, maybe two deep reviews per day. They can't be batched.
 
-**Account for the whole queue.** Eighty-odd PRs go in and a dozen come out — the other seventy must not vanish silently, or he can't tell whether the skill triaged them or just lost them. Close the tail with one line: how many weren't surfaced and why, bucketed (other reviewers assigned, draft, author inactive, already approved by someone else). A silent drop reads as "covered everything" when it isn't, and that's the failure mode that quietly erodes trust in the whole report.
+**Account for the whole queue.** Whatever goes in, only a handful should come out of the report as actions — the rest must not vanish silently, or he can't tell whether the skill triaged them or just lost them. Close the tail with one line: how many weren't surfaced and why, bucketed (other reviewers assigned, draft, author inactive, already approved by someone else). A silent drop reads as "covered everything" when it isn't, and that's the failure mode that quietly erodes trust in the whole report.
 
 ## 6. Rank
 
@@ -130,7 +130,7 @@ Order by impact, then cheapest-first within a tier. Three overrides:
 
 ### Reducing work in progress is a goal, not a side effect
 
-**Michael cares about this a lot, and the skill should be openly biased toward it.** Twenty-eight open PRs is not twenty-eight units of progress — it's twenty-eight things accruing rebase cost, splitting his attention, and going stale. Every one of them is work already paid for that hasn't been collected.
+**Michael cares about this a lot, and the skill should be openly biased toward it.** A pile of open PRs is not a pile of progress — it's a pile of things accruing rebase cost, splitting his attention, and going stale. Every one of them is work already paid for that hasn't been collected.
 
 So, concretely:
 
@@ -150,18 +150,18 @@ So, concretely:
 **Look for overlap, in both directions.** The cheapest way to reduce WIP isn't finishing faster, it's noticing that two things are the same thing:
 
 - **His own PRs that overlap each other.** Several PRs circling one feature can often land as one, or stack in a deliberate order instead of competing. Say so when you see it — same product area, same files, same problem stated twice.
-- **His work overlapping a teammate's.** If someone in `#team-self-driving` is building something his open PR already does, that's worth knowing *today*, before either of them builds more. This is the single most expensive thing to discover late.
+- **His work overlapping a teammate's.** If someone in team Slack is building something his open PR already does, that's worth knowing *today*, before either of them builds more. This is the single most expensive thing to discover late.
 - **A queue PR that supersedes one of his.** If someone else shipped it, his can close and that's WIP down for free.
 
-### Ground the impact claim in PostHog data
+### Ground the impact claim in Viktor usage data
 
 **This matters and it's the difference between a real ranking and a plausible-sounding one.** Name *who* is waiting, *which* customer asked, *what* breaks. If you can't name the beneficiary, it isn't top-tier — rank it lower and say why.
 
-**Where the claim is about user reach, use PostHog itself rather than reasoning harder.** He works at PostHog, on PostHog, and the data is right there — an impact claim made without checking it is a guess dressed up as analysis.
+**Where the claim is about user reach, use real Viktor data rather than reasoning harder.** He works at Zeta Labs, on Viktor, in `zetalabs-ai/zeta` — and the usage data is right there. An impact claim made without checking it is a guess dressed up as analysis.
 
 **This is a floor, not a nice-to-have.** Earlier versions of this skill phrased it as "reach for it when the call is close," and in practice that read as permission to skip it entirely — two full runs went by without a single query. So:
 
-> **At least two items in the plan must carry a real number from PostHog, or the report must say explicitly why none could.** "I didn't query anything" is not an acceptable silent outcome.
+> **At least two items in the plan must carry a real number from Viktor usage data, or the report must say explicitly why none could.** "I didn't query anything" is not an acceptable silent outcome.
 
 Pick the two where a number would actually change the order — usually the ones you're about to rank top-tier on intuition alone. Good angles:
 
@@ -170,7 +170,7 @@ Pick the two where a number would actually change the order — usually the ones
 - **How exposed is it?** Feature flag rollout and exposure counts.
 - **Who does it affect?** Paid plans or free, one customer or everyone.
 
-The `posthog` MCP tools and the `querying-posthog-data`, `investigating-error-issue`, and `inbox-exploration` skills are the way in. Keep each query cheap and targeted — this is two or three queries, not an analytics project. Put the number in the finding *with a link to it*: "this path gets 40 events a week across 3 orgs" settles an argument that no amount of reasoning about the code would.
+The `clickhouse-warehouse` skill is the way into Viktor's warehouse. Product-analytics MCP tools work too if they're connected. Keep each query cheap and targeted — this is two or three queries, not an analytics project. Put the number in the finding *with a link to it*: "this path gets 40 events a week across 3 workspaces" settles an argument that no amount of reasoning about the code would.
 
 A number that *deflates* an item is just as valuable as one that promotes it — finding that a "high impact" fix touches a path nobody hits saves him half a day. Report those; they're often the most useful line in the whole run.
 
@@ -205,7 +205,7 @@ sentences, which defeats the point — bold the handful of words he'd search for
 - **Outstanding:** <what he said, who's waiting, how old> · [said here](<slack permalink>)
 - **In flight:** <what he said> → [<repo#num>](<url>) <and whether that PR is itself stalled>
 
-## **FROM #team-self-driving**
+## **FROM TEAM SLACK**
 - <only what changes a priority> · [thread](<slack permalink>)
 
 ---- the tail, skim it ----
@@ -234,15 +234,15 @@ fine.
 
 **Every artifact you name gets a link, no exceptions.** This report is a jumping-off
 point — its job is to get him from "that one matters" to the actual thing in one
-click, wherever it lives. A bare `posthog#76967` makes him go find it, and that
+click, wherever it lives. A bare `zeta#15349` makes him go find it, and that
 friction is the whole reason a backlog stays a backlog.
 
 - **PRs and issues** — `url` is already in the GraphQL response. Use it:
-  `[posthog#76967](https://github.com/PostHog/posthog/pull/76967)`.
+  `[zeta#15349](https://github.com/zetalabs-ai/zeta/pull/15349)`.
 - **Slack messages, threads, and promises** — the search results carry
   `Permalink`. Link the exact message, not the channel.
 - **Anything else you cite** — a CI run, a failing job, an error-tracking issue, a
-  PostHog insight, a dashboard, an RFC, a doc. If you looked at it to form the
+  Viktor insight, a dashboard, an RFC, a doc. If you looked at it to form the
   claim, he should be able to look at it too.
 - **A quoted promise links to where he said it.** Quoting Slack without a
   permalink makes him search for his own words.

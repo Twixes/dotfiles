@@ -12,7 +12,7 @@ He is usually pressed for time when he asks for this, so move efficiently. Don't
 
 ## 1. Get the inventory from mm-today
 
-**Do not re-derive the work list.** [[mm-today]] already sweeps his open PRs, his review queue, #team-self-driving, and the promises he has made, then ranks them by whose court the ball is in. It knows things this skill should not have to: which handles are his teammates, that asking for a stamp in Slack is not the same as requesting a reviewer, that landing stalled work beats starting new work.
+**Do not re-derive the work list.** [[mm-today]] already sweeps his open PRs, his review queue, team Slack at Zeta Labs, and the promises he has made, then ranks them by whose court the ball is in. It knows things this skill should not have to: which handles are his teammates, that asking for a stamp in Slack is not the same as requesting a reviewer, that landing stalled work beats starting new work.
 
 So:
 
@@ -27,7 +27,7 @@ What comes back maps onto blocks directly:
 | **OVER THE LINE** | Finished work that is stalled. Schedule first, and early — these are minutes of his time that unstall someone else's days. |
 | **THE DAY** | The main ranked work. This is the body of the plan. |
 | **PROMISES** | Things he said he would do. Small, usually. Good end-of-day filler, unless someone is blocked. |
-| **FROM #team-self-driving** | Context, not tasks. Usually a followup for a sync, not a block. |
+| **FROM TEAM SLACK** | Context, not tasks. Usually a followup for a sync, not a block. |
 
 Add time estimates it doesn't carry. If an item has no estimate, guess from its shape and say what you assumed — don't make him estimate every line, that is the exact friction this skill exists to remove. Where he gave a range, record the lower bound but budget nearer the upper one. Reviews of large diffs almost always run long.
 

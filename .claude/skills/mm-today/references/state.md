@@ -21,17 +21,17 @@ Two jobs, and the second is the hard one:
   ],
   "principles": [
     "RFCs rank below shipping code even when they have lots of comments",
-    "Wizard PRs beat posthog PRs when a customer visit is imminent"
+    "Customer-facing PRs beat internal ones when a visit is imminent"
   ],
   "suppressions": {
-    "https://github.com/PostHog/posthog/pull/67897": {
+    "https://github.com/zetalabs-ai/zeta/pull/12345": {
       "until": "2026-08-18", "note": "parked until billing revamp lands"
     },
-    "https://posthog.slack.com/archives/C01MGUHFH6G/p1785277023080369": {
-      "until": "forever", "note": "not a promise, SF small talk"
+    "https://zetalabs.slack.com/archives/C0000000000/p0000000000000000": {
+      "until": "forever", "note": "not a promise, small talk"
     }
   },
-  "discharged": ["https://posthog.slack.com/archives/C0BLWNRLJK0/p1785793626652479"],
+  "discharged": ["https://zetalabs.slack.com/archives/C0000000000/p0000000000000000"],
   "pending": [
     {"date": "2026-08-04", "note": "said RFC ranking was too high"}
   ]

@@ -1,7 +1,8 @@
 # Queries
 
-Everything here was run and verified against live data. Constants: GitHub login
-`Twixes`, Slack user `U015X6QQN0N`, `#team-self-driving` is `C09SK2PAGKF`.
+Constants: GitHub login `Twixes`, GitHub org `zetalabs-ai` (Viktor lives in
+`zetalabs-ai/zeta`). For Slack, use `from:me` / `to:me` — don't hardcode a user
+or channel id; those change across workspaces.
 
 Run the sweeps in parallel — Slack dominates wall-clock.
 
@@ -11,8 +12,8 @@ Always go through the script. It paginates, which is mandatory (see below).
 
 ```bash
 D=~/.claude/skills/mm-today/references
-$D/fetch-prs.sh 'is:pr is:open org:PostHog author:Twixes'            # ~28, ~12s
-$D/fetch-prs.sh 'is:pr is:open org:PostHog review-requested:Twixes'  # ~78, ~30s
+$D/fetch-prs.sh 'is:pr is:open org:zetalabs-ai author:Twixes'            # his PRs
+$D/fetch-prs.sh 'is:pr is:open org:zetalabs-ai review-requested:Twixes'  # his queue
 ```
 
 Returns `{prs, issueCount, fetched, truncated}`. **Check `truncated`.** Report it
@@ -37,8 +38,8 @@ The bottleneck is PRs-per-page, not the sub-field sizes — 50 still 502s with
 which is the heavy one. A 502 comes back as HTML, so a naive JSON parse dies with
 a confusing decode error rather than anything that reads like a rate limit.
 
-The old single-call `first: 50` version **silently truncated the review queue at
-50 when the real count was 78.** That's the failure this script exists to prevent.
+The old single-call `first: 50` version **silently truncated a review queue that
+was larger than one page.** That's the failure this script exists to prevent.
 
 ### Fields, and what each is for
 
@@ -62,10 +63,10 @@ alone, so it only ever under-detects on something already flagged.
 
 `statusCheckRollup.state` can read `FAILURE` when the only bad job was **cancelled
 by a superseding run**. So it needs verification — but **you cannot verify it
-inside the GraphQL query.** PostHog PRs carry **168–435 check contexts** and
-`contexts(last: 100)` silently truncates, so the genuinely-failed job usually
-falls outside the window. An early version of this skill did exactly that and
-reported three real failures as false alarms.
+inside the GraphQL query.** Large monorepo PRs can carry **hundreds of check
+contexts** and `contexts(last: 100)` silently truncates, so the genuinely-failed
+job usually falls outside the window. An early version of this skill did exactly
+that and reported real failures as false alarms.
 
 So: take the rollup as the coarse signal, then shell out **only for the handful
 that read `FAILURE`**:
@@ -74,11 +75,11 @@ that read `FAILURE`**:
 gh pr checks <n> --repo <repo> | awk -F'\t' '$2=="fail"{print $1}'
 ```
 
-Only a few PRs are red, so this is a few extra calls, not eighty.
+Only a few PRs are red, so this is a few extra calls, not the whole queue.
 
 ### Search qualifier gotchas
 
-- `org:PostHog` goes **inside the query string**. `gh search prs --org=` is not a
+- `org:zetalabs-ai` goes **inside the query string**. `gh search prs --org=` is not a
   real flag and errors out.
 - `review-requested:` drops off once he submits a review, so the queue is
   genuinely un-actioned — but team-assigned requests persist and some entries are
@@ -86,11 +87,11 @@ Only a few PRs are red, so this is a few extra calls, not eighty.
 - `reviewDecision: null` means nothing was requested or submitted — common on his
   own PRs, and **not** the same as `REVIEW_REQUIRED`.
 
-## Slack — team channel
+## Slack — team channels
 
-```
-slack_read_channel(channel_id="C09SK2PAGKF", limit=60)
-```
+Don't hardcode a channel id. Find the Zeta Labs / Viktor channels he's actually
+in from recent mentions and conversations, then read the last 2–3 days of the
+ones that look like team home (engineering, product, his working group).
 
 Two to three days is enough. Pull only: someone blocked on Michael, work
 colliding with his open PRs, unanswered questions to him, and what the team is
@@ -106,8 +107,8 @@ slack_search_public_and_private(
   query="to:me after:<14d ago>", sort="timestamp", limit=20)
 ```
 
-For each hit, check whether he replied in that thread. No reply from
-`U015X6QQN0N` after the mention = a dropped ball.
+For each hit, check whether he replied in that thread. No reply from him after
+the mention = a dropped ball.
 
 ## Slack — promises
 
@@ -115,7 +116,7 @@ Wide net, then filter hard.
 
 ```
 slack_search_public_and_private(
-  query="from:<@U015X6QQN0N> <phrase> after:<14d ago>",
+  query="from:me <phrase> after:<14d ago>",
   sort="timestamp", limit=20, include_context=false)
 ```
 
@@ -133,7 +134,7 @@ Abba"), narration, and small talk. Expect to discard most of it, and never repor
 a promise you haven't read in context.
 
 **Then check for discharge**, and then check whether the discharging PR is
-*itself* stalled — that's where the value is. Aug 3: *"Hmm I'll see what I can do
-do have wizard support Replay Vision scanners"* → `wizard#1055` and
-`context-mill#313` opened Aug 4, and #313 was sitting green with **no reviewer
-requested**. A customer commitment, invisible, one click from moving.
+*itself* stalled — that's where the value is. The shape: he says he'll add
+support for something a customer asked about, a PR goes up the next day, and
+that PR is sitting green with **no reviewer requested**. A customer commitment,
+invisible, one click from moving.

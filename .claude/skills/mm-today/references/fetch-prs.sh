@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Paginated PR fetch for mm-today. Emits one JSON object: {prs: [...], truncated: bool}
-# Usage: ./fetch-prs.sh 'is:pr is:open org:PostHog author:Twixes'
+# Usage: ./fetch-prs.sh 'is:pr is:open org:zetalabs-ai author:Twixes'
 set -euo pipefail
 Q="${1:?usage: fetch-prs.sh <github search query>}"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
