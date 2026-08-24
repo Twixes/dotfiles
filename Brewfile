@@ -373,9 +373,6 @@ cask "chatgpt"
 cask "claude-code@latest"
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
-# Node-based image, video and audio generator
-cask "comfy"
-cask "conductor"
 # Native document editor
 cask "craft"
 cask "craft-agents"
@@ -399,8 +396,6 @@ cask "github"
 cask "glaze-app"
 # Web browser
 cask "google-chrome"
-# AI-powered notepad for meetings
-cask "granola"
 # Open-source video transcoder
 cask "handbrake-app"
 # Testing client for REST, GraphQL, and HTTP APIs
@@ -451,13 +446,8 @@ cask "tailscale-app"
 cask "transmission"
 # Tool to invert scroll direction for physical scroll wheels
 cask "unnaturalscrollwheels"
-# Virtualiser for arm64 hardware
-cask "virtualbox"
 # Open-source code editor
 cask "visual-studio-code"
-cask "void"
-# Terminal emulator
-cask "wave"
 cask "wispr-flow"
 # Gecko based web browser
 cask "zen"
@@ -468,7 +458,6 @@ mas "1Password for Safari", id: 1569813296
 mas "Camera RawX", id: 6587554858
 mas "Color Picker", id: 1545870783
 mas "Dato", id: 1470584107
-mas "Hand Mirror", id: 1502839586
 mas "iA Writer", id: 775737590
 mas "Microsoft To Do", id: 1274495053
 mas "Refined GitHub", id: 1519867270
