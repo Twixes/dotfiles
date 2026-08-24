@@ -55,6 +55,11 @@ cp .gnupg/gpg-agent.conf ~/.gnupg/gpg-agent.conf
 # Run OS-specific init
 if [[ $(uname) == 'Darwin' ]]; then
     ./init-macos.sh
+    # init-macos.sh is where Homebrew gets installed, but it ran as a child
+    # process, so the PATH it set up went away with it. Everything below this
+    # line – jq, strfile, fortune, fish – is brew-installed, and none of it is
+    # on the PATH of the shell that started this script. Repeat the eval here.
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 ### CLAUDE CODE, PART TWO ###
