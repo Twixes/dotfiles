@@ -93,8 +93,17 @@ fi
 # goes out through a copy of terminal-notifier.app wearing Claude's icon.
 # `-appIcon` would be the obvious flag, but it drives a private API that Big Sur
 # removed, and `-sender` hangs forever – fatal in a hook the session waits on.
+#
+# A missing bundle (fresh machine, ~/Applications cleaned out) is rebuilt right
+# here instead of waiting for the next init-macos.sh run. The -x test is one
+# stat, so the happy path costs nothing; the build runs once and takes ~1s.
+# Plain terminal-notifier stays as the last resort, e.g. when Claude.app is not
+# installed, so the notification still goes out – just without the icon.
 NOTIFIER="$HOME/Applications/Claude Code Notifier.app/Contents/MacOS/terminal-notifier"
-[ -x "$NOTIFIER" ] || NOTIFIER=terminal-notifier
+if [ ! -x "$NOTIFIER" ]; then
+  "$(dirname "$0")/install-notifier-app.sh" >/dev/null 2>&1 || true
+  [ -x "$NOTIFIER" ] || NOTIFIER=terminal-notifier
+fi
 
 "$NOTIFIER" \
   -title "$TITLE" \

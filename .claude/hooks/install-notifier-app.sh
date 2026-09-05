@@ -7,8 +7,9 @@
 # that Big Sur removed, and `-sender` hangs forever, which is fatal inside a hook
 # the session waits on. Posting through our own bundle is what is left.
 #
-# Idempotent. Safe to skip – notify-done.sh falls back to plain terminal-notifier
-# when this bundle is absent, just without the icon.
+# Idempotent. Run by init-macos.sh, and by claude-notify.sh itself whenever it
+# finds the bundle missing. Safe to skip – claude-notify.sh falls back to plain
+# terminal-notifier when this bundle is absent, just without the icon.
 
 set -euo pipefail
 
