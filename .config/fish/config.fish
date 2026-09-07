@@ -1,12 +1,22 @@
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Guarded so the same file works on a Linux box (the devbox) where none of the
+# macOS tooling exists. Machine-specific bits live in conf.d/, not here.
+if test -x /opt/homebrew/bin/brew
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+end
 
 # Keep editor extensions out of the Brewfile - Cursor and VS Code sync their own
 set -gx HOMEBREW_BUNDLE_DUMP_NO_VSCODE 1
 
-pyenv init - | source
-pyenv virtualenv-init - | source
-direnv hook fish | source
-starship init fish | source
+if command -q pyenv
+    pyenv init - | source
+    pyenv virtualenv-init - | source
+end
+if command -q direnv
+    direnv hook fish | source
+end
+if command -q starship
+    starship init fish | source
+end
 
 # git aliases
 

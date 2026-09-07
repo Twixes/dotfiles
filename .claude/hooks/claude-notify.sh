@@ -10,6 +10,10 @@
 # Stays silent while the terminal app is frontmost, because then you are already
 # looking at it. Override the app with CLAUDE_NOTIFY_TERM_BUNDLE.
 
+# Everything below is macOS-only (lsappinfo, terminal-notifier). On Linux the
+# hook still runs from the shared settings, so leave quietly rather than fail.
+[ "$(uname)" = Darwin ] || exit 0
+
 INPUT=$(cat)
 IFS=$'\t' read -r EVENT TRANSCRIPT CWD STOP_ACTIVE ASK < <(
   echo "$INPUT" | jq -r '[.hook_event_name // "Stop", .transcript_path // "",

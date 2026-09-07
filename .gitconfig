@@ -14,6 +14,11 @@
 [includeIf "hasconfig:remote.*.url:https://github.com/zetalabs-ai/**"]
 	path = ~/.gitconfig-zetalabs-ai
 
+# Per-machine overrides, written by the init scripts and ignored when absent.
+# Last so it wins: on a box without the signing key this turns gpgsign off.
+[include]
+	path = ~/.gitconfig-local
+
 # clearly makes git better
 
 [column]
