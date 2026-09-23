@@ -8,3 +8,6 @@ window-width = 120
 window-height = 40
 font-thicken = true
 cursor-style = bar
+# Close a tab or window without asking, even with something like `devbox` still running:
+# a detached tmux session on the sandbox comes back with the next `devbox`.
+confirm-close-surface = false
