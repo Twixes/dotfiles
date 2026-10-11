@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!--
+  Visual foundation for mm-frontend explainers. Copy this file, then design the page.
+
+  What it gives you (keep):
+    - <head> with sharing metadata, no-flash theme resolution
+      (system preference, persisted toggle, ?theme=light|dark override), system fonts
+    - the token system (colors, type, radii, shadow) in light and dark
+    - a floating theme toggle
+    - code highlighting for .codeblock[data-lang], copy buttons, print styles
+
+  What it deliberately does not give you: a layout. The <body> is empty except
+  for the toggle. Write this page's structure and CSS on top of the tokens.
+
+  The "optional primitives" block holds tested building blocks (figure frame,
+  code block, table, fold, pill, note, big number). Use them, restyle them, or
+  delete the block. Nothing outside the guardrails in SKILL.md is required.
+-->
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Title: one-line subject</title>
+<meta name="description" content="One sentence a reader can act on.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Title: one-line subject">
+<meta property="og:description" content="One sentence a reader can act on.">
+<meta name="theme-color" content="#0b0f12">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("viz-theme"); } catch (e) {}
+    var q = new URLSearchParams(location.search).get("theme");
+    document.documentElement.setAttribute(
+      "data-theme",
+      q || t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    );
+  })();
+</script>
+<style>
+  /* ============ tokens ============ */
+  :root {
+    /* One hue per page (172 teal, 217 blue, 258 violet, 20 ember, 330 rose, 95 leaf). */
+    --hue: 258;
+    --font: system-ui, -apple-system, sans-serif;
+    --font-display: var(--font);
+    --mono: ui-monospace, "SFMono-Regular", monospace;
+    --radius: 10px;
+    --measure: 68ch;
+
+    --bg: #0b0f12;
+    --bg-panel: #0f1418;
+    --bg-raise: #141b20;
+    --bg-code: #0d1317;
+    --text: #e3eaee;
+    --text-soft: #97a6ae;
+    --text-faint: #71828c;
+    --line: #1e272d;
+    --line-soft: #161e23;
+    --accent: hsl(var(--hue) 72% 58%);
+    --accent-text: hsl(var(--hue) 78% 70%);
+    --accent-dim: hsl(var(--hue) 55% 18%);
+    --accent-glow: hsl(var(--hue) 80% 60% / .28);
+    --warn: #e5b94a; --warn-dim: #2a2109;
+    --bad: #f27a6c;  --bad-dim: #2c1512;
+    --good: #4fd08d; --good-dim: #0e2a1d;
+    --code-k: #ff9b8a; --code-s: #8fd3ff; --code-c: #74858f; --code-f: #cbb2ff; --code-n: #6fe3c0;
+    --shadow: 0 18px 50px rgba(0,0,0,.45);
+  }
+  [data-theme="light"] {
+    --bg: #f7f8f9;
+    --bg-panel: #ffffff;
+    --bg-raise: #eef1f3;
+    --bg-code: #f1f4f6;
+    --text: #10181d;
+    --text-soft: #4a5a63;
+    --text-faint: #7f929b;
+    --line: #dce3e7;
+    --line-soft: #e9eef1;
+    --accent: hsl(var(--hue) 70% 42%);
+    --accent-text: hsl(var(--hue) 74% 32%);
+    --accent-dim: hsl(var(--hue) 60% 93%);
+    --accent-glow: hsl(var(--hue) 80% 50% / .18);
+    --warn: #96690a; --warn-dim: #fdf6e3;
+    --bad: #b3402f;  --bad-dim: #fdecea;
+    --good: #14795a; --good-dim: #e6f7ef;
+    --code-k: #b3402f; --code-s: #10557f; --code-c: #8497a0; --code-f: #6b3fbf; --code-n: #0f6b56;
+    --shadow: 0 18px 50px rgba(20,30,40,.12);
+  }
+
+  /* ============ base ============ */
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+  body { background: var(--bg); color: var(--text); font: 400 16px/1.6 var(--font); -webkit-font-smoothing: antialiased; }
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -.015em; line-height: 1.15; text-wrap: balance; }
+  p, li { color: var(--text-soft); }
+  p strong, li strong { color: var(--text); font-weight: 600; }
+  a { color: var(--accent-text); }
+  ::selection { background: var(--accent-dim); }
+  code, pre, kbd, .mono { font-family: var(--mono); }
+  p code, li code, td code, h1 code, h2 code, h3 code { font-size: .86em; background: var(--bg-raise); border: 1px solid var(--line-soft); border-radius: 5px; padding: 1px 5px; color: var(--text); overflow-wrap: anywhere; }
+  kbd { font-size: 11px; background: var(--bg-raise); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; color: var(--text-soft); }
+  a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  img, svg { max-width: 100%; }
+
+  /* ============ theme toggle ============ */
+  #theme-toggle { position: fixed; top: 14px; right: 14px; z-index: 50; display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
+    background: color-mix(in srgb, var(--bg-panel) 88%, transparent); backdrop-filter: blur(8px); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 11px; font: 500 12px var(--font); color: var(--text-soft); }
+  #theme-toggle:hover { color: var(--text); border-color: var(--text-faint); }
+
+  /* ============ optional primitives — use, restyle, or delete ============ */
+  .measure { max-width: var(--measure); }
+  .eyebrow { font: 600 11px var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--accent-text); }
+  .big { font: 800 clamp(44px, 8vw, 96px)/1 var(--font-display); letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+  .big small { display: block; font: 500 14px/1.4 var(--font); letter-spacing: 0; color: var(--text-soft); margin-top: 10px; }
+
+  figure { margin: 0; }
+  figure.frame { border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-panel); padding: 18px; }
+  figure img { display: block; width: 100%; border-radius: calc(var(--radius) - 3px); }
+  figcaption { font-size: 13px; color: var(--text-faint); margin-top: 10px; line-height: 1.5; }
+  figcaption b { color: var(--text-soft); }
+
+  .pill { display: inline-block; font: 600 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px;
+    background: var(--bg-raise); color: var(--text-soft); white-space: nowrap; vertical-align: middle; }
+  .pill.good { background: var(--good-dim); color: var(--good); } .pill.warn { background: var(--warn-dim); color: var(--warn); } .pill.bad { background: var(--bad-dim); color: var(--bad); }
+  .pill.accent { background: var(--accent-dim); color: var(--accent-text); }
+
+  .note { display: grid; grid-template-columns: 92px 1fr; gap: 14px; padding: 12px 15px; border: 1px solid var(--line); border-left: 2px solid var(--accent);
+    border-radius: 0 8px 8px 0; background: var(--bg-panel); font-size: 14.5px; color: var(--text-soft); }
+  .note .tag { font: 600 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--accent-text); padding-top: 3px; }
+  .note.warn { border-left-color: var(--warn); } .note.warn .tag { color: var(--warn); }
+  .note.bad { border-left-color: var(--bad); } .note.bad .tag { color: var(--bad); }
+  @media (max-width: 620px) { .note { grid-template-columns: 1fr; gap: 4px; } }
+
+  .codeblock { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--bg-code); }
+  .code-head { display: flex; align-items: center; gap: 10px; background: var(--bg-panel); border-bottom: 1px solid var(--line); padding: 6px 12px;
+    font: 500 11.5px var(--mono); color: var(--text-faint); }
+  .code-head .lang { color: var(--accent-text); background: var(--accent-dim); border-radius: 3px; padding: 1px 6px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; }
+  .code-copy { margin-left: auto; font: 600 11px var(--font); color: var(--text-faint); background: none; border: 1px solid var(--line); border-radius: 5px; padding: 2px 8px; cursor: pointer; }
+  .code-copy:hover { color: var(--text); }
+  pre { padding: 13px 14px; overflow-x: auto; font-size: 12.75px; line-height: 1.62; }
+  .tok-k { color: var(--code-k); } .tok-s { color: var(--code-s); } .tok-c { color: var(--code-c); font-style: italic; } .tok-f { color: var(--code-f); } .tok-n { color: var(--code-n); }
+  .hl { background: var(--accent-dim); display: inline-block; width: 100%; }
+  .line-add { background: var(--good-dim); display: inline-block; width: 100%; }
+  .line-del { background: var(--bad-dim); display: inline-block; width: 100%; }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead th { background: var(--bg-panel); text-align: left; font: 600 10.5px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint);
+    padding: 9px 14px; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--line-soft); vertical-align: top; color: var(--text-soft); }
+  tbody tr:last-child td { border-bottom: 0; } td:first-child { color: var(--text); }
+  .num { font: 500 12.5px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  details.fold { border: 1px solid var(--line); border-radius: 8px; background: var(--bg-panel); }
+  details.fold summary { cursor: pointer; padding: 10px 14px; font: 600 13.5px var(--font); color: var(--text-soft); list-style: none; display: flex; gap: 9px; align-items: center; }
+  details.fold summary::before { content: "▸"; color: var(--text-faint); font-size: 10px; transition: transform .15s; }
+  details.fold[open] summary::before { transform: rotate(90deg); }
+  details.fold .fold-body { padding: 0 14px 14px; }
+
+  /* ============ print ============ */
+  @media print {
+    :root, [data-theme="dark"] {
+      --bg: #fff; --bg-panel: #fff; --bg-raise: #f4f6f7; --bg-code: #f7f9fa; --text: #0c1317; --text-soft: #3b4a52; --text-faint: #667780;
+      --line: #d6dee1; --line-soft: #e9eef0; --accent: hsl(var(--hue) 74% 30%); --accent-dim: hsl(var(--hue) 55% 94%); --accent-text: hsl(var(--hue) 74% 26%);
+      --good: #14795a; --good-dim: #eef8f3; --warn: #8a6008; --warn-dim: #fdf8ea; --bad: #a83a2a; --bad-dim: #fdefec;
+      --code-k: #a83a2a; --code-s: #0e4a70; --code-c: #667780; --code-f: #5b2fb0; --code-n: #0c5f4c;
+    }
+    #theme-toggle, .code-copy { display: none !important; }
+    body { background: #fff; }
+    figure, .codeblock, .table-scroll, .note { break-inside: avoid; }
+    details.fold .fold-body { display: block !important; }
+    a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 10px; color: #666; }
+  }
+
+  /* ============ this page ============ */
+  /* Your layout and components go here. */
+</style>
+</head>
+<body>
+
+<button id="theme-toggle" type="button" aria-pressed="true"><span id="theme-icon">☀</span><span id="theme-text">Light</span></button>
+
+<!-- Page content: yours. -->
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var theme = root.getAttribute("data-theme");
+  var toggle = document.getElementById("theme-toggle");
+  function applyTheme(t) {
+    root.setAttribute("data-theme", t);
+    toggle.setAttribute("aria-pressed", String(t === "dark"));
+    document.getElementById("theme-text").textContent = t === "dark" ? "Light" : "Dark";
+    document.getElementById("theme-icon").textContent = t === "dark" ? "☀" : "◐";
+  }
+  applyTheme(theme);
+  toggle.addEventListener("click", function () {
+    theme = theme === "dark" ? "light" : "dark";
+    try { localStorage.setItem("viz-theme", theme); } catch (e) {}
+    applyTheme(theme);
+  });
+
+  // ---- highlighting for .codeblock[data-lang]: HTML-escape source in the markup ----
+  var KEYWORDS = {
+    python: /\b(async|await|def|class|return|if|elif|else|for|while|import|from|raise|try|except|finally|with|as|in|not|and|or|None|True|False|yield|lambda|pass)\b/,
+    js: /\b(const|let|var|function|return|if|else|for|while|import|from|export|default|class|new|await|async|try|catch|throw|typeof|of|in|null|true|false|interface|type)\b/,
+    sql: /\b(select|from|where|group by|order by|join|left|inner|on|as|and|or|not|in|with|limit|count|sum|avg|distinct|case|when|then|else|end|having|between|null|is)\b/i,
+    bash: /\b(if|then|else|fi|for|do|done|while|case|esac|function|export|local|return|echo|cd|uv|python3?|git|gh)\b/
+  };
+  var COMMENTS = { python: "#[^\\n]*", js: "//[^\\n]*", sql: "--[^\\n]*", bash: "#[^\\n]*" };
+  function escapeHtml(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function highlight(text, lang) {
+    var kw = KEYWORDS[lang] || KEYWORDS.js;
+    var pattern = new RegExp(
+      "(" + (COMMENTS[lang] || COMMENTS.js) + ")"
+      + "|(\"\"\"[\\s\\S]*?\"\"\"|\"[^\"\\n]*\"|'[^'\\n]*'|`[^`]*`)"
+      + "|(\\b\\d[\\d_]*\\.?\\d*\\b)"
+      + "|([A-Za-z_][\\w]*)(?=\\()"
+      + "|" + kw.source, "g" + (kw.ignoreCase ? "i" : ""));
+    var out = "", last = 0, m;
+    while ((m = pattern.exec(text)) !== null) {
+      out += escapeHtml(text.slice(last, m.index));
+      var cls = m[1] ? "tok-c" : m[2] ? "tok-s" : m[3] ? "tok-n" : m[4] ? "tok-f" : "tok-k";
+      out += '<span class="' + cls + '">' + escapeHtml(m[0]) + "</span>";
+      last = m.index + m[0].length;
+    }
+    return out + escapeHtml(text.slice(last));
+  }
+  document.querySelectorAll(".codeblock[data-lang]").forEach(function (block) {
+    var code = block.querySelector("code");
+    code.innerHTML = highlight(code.textContent, block.getAttribute("data-lang"));
+  });
+
+  // ---- copy buttons on every code block that has a head ----
+  document.querySelectorAll(".codeblock").forEach(function (block) {
+    var head = block.querySelector(".code-head");
+    if (!head) return;
+    var btn = document.createElement("button");
+    btn.className = "code-copy"; btn.type = "button"; btn.textContent = "Copy";
+    btn.addEventListener("click", function () {
+      var text = block.querySelector("code").textContent;
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      if (navigator.clipboard) { navigator.clipboard.writeText(text).catch(function () {}); }
+      btn.textContent = "Copied";
+      setTimeout(function () { btn.textContent = "Copy"; }, 2000);
+    });
+    head.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>

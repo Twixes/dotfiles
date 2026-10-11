@@ -1,12 +1,41 @@
 # The design lab harness
 
-A throwaway Storybook folder holding one story per variant plus a grid story that renders them all at once. The grid renders **iframes**, not components, because a tile has to be an isolated instance and an isolated instance needs its own document.
+A temporary lab holds one view per variant plus a comparison showing them all at once. Choose the smallest harness that represents the decision honestly.
 
-Everything in this file is plain Storybook, so it works in any project that has Storybook at all. The parts that differ per project are called out as such, and they belong in the repo memory once derived.
+## Choose the harness
+
+| Surface | Harness |
+| --- | --- |
+| Web or shared web UI with a working dev server | Local-only switcher route and iframe grid |
+| Components with a working Storybook and useful stories | Storybook grid using the existing setup |
+| Desktop or mobile UI that renders faithfully on the web | The existing web preview, at representative dimensions |
+| Native behavior such as windows, safe areas, or keyboard avoidance | One native preview session, sequential screenshots, labeled contact sheet |
+
+Respect a project's prescribed preview tooling. If a harness will not boot, try the next viable option and explain the limitation. Do not install a new framework just for this lab. Keep one preview instance per comparison, owned by the orchestrator.
+
+## Local-only route
+
+Put the variants and shared contract in an obviously temporary `dev-<slug>-lab` folder. The switcher has two modes: the default comparison grid and `?solo=<id>` for one full-size variant. Each iframe and full-size label link points at a solo URL, never at the grid itself.
+
+Use the project's local-only route gate. Where necessary, allow that lab path through local auth middleware without weakening authentication for other paths or environments. Prefer fictional fixtures and local state; a comparison should not depend on live sockets, production data, or a backend being available. Let route-generation tooling update generated files.
+
+Render desktop tiles near 1440 by 900 and phone tiles near 390 by 844, then scale to fit. Use the iframe sizing pattern below with solo URLs instead of Storybook URLs. A single shared clock is a reason to mount pure variants in one document; isolate their state and layout and explain that choice.
+
+Inspect each solo URL and then the grid. For native comparisons, capture each variant in the same state and viewport on one session, then compose the labeled contact sheet. Keep the live preview available for interaction when possible.
+
+## Portable handoff
+
+For a shareable comparison, export a single HTML file with inline CSS, JavaScript, and images. Bundle interactive variants into iframe `srcdoc` documents, or label screenshots as static. Verify the export without the dev server: localhost links, unbundled React imports, and backend calls are not a portable artifact. Use an established authorized publisher if the project has one; otherwise provide the file and live local preview separately. Update the same artifact after revisions.
+
+Delete the app's temporary routes, variants, and lab-only middleware entries only after Michael chooses. Retain an exported review artifact when requested.
+
+## Storybook recipe
+
+The remaining recipe uses stock Storybook. Project-specific mounting and mock calls belong in repo memory.
 
 ## Why iframes and not N components on one page
 
-An app of any size has a single global store and a single URL-driven router. Mount four copies of the root component into one document and they fight over both: whichever navigated last wins, and all four tiles render the same route. This is true of Redux, kea, Zustand, MobX, and every router built on the History API. It is not a bug you can work around inside one document.
+Full-app instances often share module-level stores, URL-driven routing, and fixed-position elements. Mounting four copies in one document can make them fight over state or layout. Pure components with explicitly isolated state can share a document, but separate iframes are the dependable default for full-app comparisons.
 
 Each iframe is a separate document, so each gets its own store, its own router, and its own mock handlers. That is what makes four labeled full-context tiles possible at all.
 
