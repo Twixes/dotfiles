@@ -11,8 +11,12 @@ This is a cache, not documentation. If an entry needs more than a few lines it b
 ```markdown
 # mm-frontend memory: <owner/repo>
 
-## Storybook
+## Preview harness
+Kind: <local route / Storybook / web preview / native contact sheet>
 Start: <command, port, cold boot time, whether a prebuild step runs first>
+Lab route and local-only gate: <paths and approach, or "n/a">
+Native preview: <device/window tooling and capture method, or "n/a">
+Export/publish: <portable artifact location and established publisher, or "local file only">
 Story globs: <where a story file must live to be picked up, from .storybook/main.ts>
 Tile depth: <app root at a real route / page container / component only, and the exact imports>
 Navigate before mount: <the synchronous navigation call this project needs, or "n/a">
@@ -42,5 +46,5 @@ Harness scars: <things that broke and the fix>
 - Trust a working entry. Do not re-verify it.
 - If a recorded command fails, re-derive that one entry and update it. Never leave a stale entry in place while quietly working around it.
 - **Mark what was verified by running versus by reading config.** They are not the same confidence, and a pattern read out of a config file can be subtly wrong in a way only a boot reveals.
-- **A project with no Storybook is a valid finding.** Record it, and either set Storybook up if that is proportionate to the work, or use the contact-sheet fallback in [harness.md](harness.md). Do not silently skip the grid.
+- **A project with no Storybook is a valid finding.** Record it and use the local route or native comparison in [harness.md](harness.md). Do not silently skip the comparison or install Storybook when the existing preview is sufficient. Leave irrelevant schema fields out.
 - `Rejected on principle` only grows from real rejections. Do not seed it with guesses, and keep the reason, because "rejected because the execution was rough" is the opposite of "rejected because he hates the idea".
